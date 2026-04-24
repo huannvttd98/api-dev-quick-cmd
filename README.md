@@ -161,6 +161,9 @@ GET /api/v1/search?q=pull&limit=5
 - Field bat buoc: `file`
 - Chi nhan file co duoi `.json`, kich thuoc toi da `2MB`.
 - File upload hop le se duoc luu vao thu muc `data/`.
+- API se validate schema JSON theo format `{ category, commands[] }`.
+- Neu `DATABASE_DRIVER=mariadb`, du lieu se duoc upsert vao bang `categories` va `commands`.
+- Neu `DATABASE_DRIVER=json`, API chi luu file va tra ve trang thai `database.status = skipped`.
 
 Vi du bang `curl`:
 
@@ -173,6 +176,22 @@ Vi du bang PowerShell:
 
 ```powershell
 curl.exe -X POST "http://localhost:8787/api/v1/upload-json" -F "file=@data/ssh.json"
+```
+
+Response mau:
+
+```json
+{
+  "message": "JSON uploaded successfully",
+  "fileName": "ssh.json",
+  "savedTo": "data",
+  "category": "ssh",
+  "database": {
+    "driver": "mariadb",
+    "status": "imported",
+    "importedCommands": 13
+  }
+}
 ```
 
 ## Test nhanh bang PowerShell
@@ -189,6 +208,7 @@ Invoke-RestMethod -Uri "http://localhost:8787/api/v1/search?q=pull&limit=5" | Co
 - Cau hinh database tap trung tai `api/src/config/database.ts`.
 - Mau bien moi truong tai `api/.env.example`.
 - SQL khoi tao MariaDB tai `api/db/mariadb.schema.sql`.
+- Upload endpoint co the dong bo JSON vao MariaDB neu bat `DATABASE_DRIVER=mariadb`.
 - Du lieu dang in-memory, phu hop MVP va offline dataset.
 - Search dang dung scoring don gian trong `api/src/search.ts`.
 
