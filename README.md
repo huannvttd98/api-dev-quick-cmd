@@ -162,8 +162,9 @@ GET /api/v1/search?q=pull&limit=5
 - Chi nhan file co duoi `.json`, kich thuoc toi da `2MB`.
 - File upload hop le se duoc luu vao thu muc `data/`.
 - API se validate schema JSON theo format `{ category, commands[] }`.
-- Neu `DATABASE_DRIVER=mariadb`, du lieu se duoc upsert vao bang `categories` va `commands`.
-- Neu `DATABASE_DRIVER=json`, API chi luu file va tra ve trang thai `database.status = skipped`.
+- API khong import database trong request upload.
+- Sau khi luu file, API ghi metadata job vao thu muc `data/import-queue/`.
+- Viec import vao DB de job khac xu ly sau, API tra ve `database.status = deferred`.
 
 Vi du bang `curl`:
 
@@ -188,10 +189,84 @@ Response mau:
   "category": "ssh",
   "database": {
     "driver": "mariadb",
-    "status": "imported",
-    "importedCommands": 13
+    "status": "deferred",
+    "importedCommands": 0
+  },
+  "queue": {
+    "jobId": "3f9d3c0b-6b0b-4c78-bf57-8ff5a0f68c6d",
+    "status": "pending",
+    "file": "import-queue/2026-04-24T09-15-12-125Z-3f9d3c0b-6b0b-4c78-bf57-8ff5a0f68c6d.json"
   }
 }
+```
+
+Noi dung queue file mau:
+
+```json
+{
+  "jobId": "3f9d3c0b-6b0b-4c78-bf57-8ff5a0f68c6d",
+  "type": "dataset-import",
+  "status": "pending",
+  "createdAt": "2026-04-24T09:15:12.125Z",
+  "fileName": "ssh.json",
+  "filePath": "ssh.json",
+  "category": "ssh",
+  "commandCount": 13
+}
+```
+
+### 8) Queue jobs
+
+- `GET /api/v1/import-queue`
+- Tra ve danh sach job trong `data/import-queue/`, sap xep moi nhat truoc.
+- Moi job co the o mot trong cac trang thai: `pending`, `processing`, `done`, `failed`.
+
+Vi du:
+
+```text
+GET /api/v1/import-queue
+```
+
+Response mau:
+
+```json
+{
+  "data": [
+    {
+      "jobId": "3f9d3c0b-6b0b-4c78-bf57-8ff5a0f68c6d",
+      "status": "done",
+      "queueFile": "import-queue/2026-04-24T09-15-12-125Z-3f9d3c0b-6b0b-4c78-bf57-8ff5a0f68c6d.json",
+      "category": "ssh",
+      "commandCount": 13,
+      "importedCommands": 13,
+      "attempts": 1,
+      "createdAt": "2026-04-24T09:15:12.125Z",
+      "startedAt": "2026-04-24T09:16:01.000Z",
+      "finishedAt": "2026-04-24T09:16:02.100Z"
+    }
+  ],
+  "version": "2026-04-24"
+}
+```
+
+### 9) Worker import queue
+
+- Worker doc cac file `data/import-queue/*.json` co trang thai `pending`.
+- Khi bat dau import, worker doi status thanh `processing`.
+- Import thanh cong thi doi status thanh `done` va ghi `importedCommands`.
+- Import loi thi doi status thanh `failed` va ghi `errorMessage`.
+- Worker yeu cau `DATABASE_DRIVER=mariadb` va DB connection hop le.
+
+Chay worker:
+
+```bash
+npm --prefix api run worker
+```
+
+PowerShell:
+
+```powershell
+npm --prefix api run worker
 ```
 
 ## Test nhanh bang PowerShell
@@ -200,6 +275,7 @@ Response mau:
 Invoke-RestMethod -Uri http://localhost:8787/health | ConvertTo-Json -Depth 5
 Invoke-RestMethod -Uri http://localhost:8787/api/v1/categories | ConvertTo-Json -Depth 6
 Invoke-RestMethod -Uri "http://localhost:8787/api/v1/search?q=pull&limit=5" | ConvertTo-Json -Depth 6
+Invoke-RestMethod -Uri "http://localhost:8787/api/v1/import-queue" | ConvertTo-Json -Depth 6
 ```
 
 ## Ghi chu implementation
@@ -208,7 +284,8 @@ Invoke-RestMethod -Uri "http://localhost:8787/api/v1/search?q=pull&limit=5" | Co
 - Cau hinh database tap trung tai `api/src/config/database.ts`.
 - Mau bien moi truong tai `api/.env.example`.
 - SQL khoi tao MariaDB tai `api/db/mariadb.schema.sql`.
-- Upload endpoint co the dong bo JSON vao MariaDB neu bat `DATABASE_DRIVER=mariadb`.
+- Upload endpoint luu file JSON va tao queue file trong `data/import-queue`; import vao MariaDB do worker rieng dam nhiem.
+- Worker queue nam tai `api/src/worker.ts` va co lenh chay `npm --prefix api run worker`.
 - Du lieu dang in-memory, phu hop MVP va offline dataset.
 - Search dang dung scoring don gian trong `api/src/search.ts`.
 

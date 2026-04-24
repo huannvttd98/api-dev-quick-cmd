@@ -3,12 +3,12 @@ import express from "express";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import * as mariadb from "mariadb";
 import multer from "multer";
 import { ALL_COMMANDS, CATEGORIES, COMMAND_BY_ID } from "./catalog.js";
+import { parseCategoryDataset } from "./dataset.js";
 import { getDatabaseConfig } from "./config/database.js";
+import { createImportQueueJob, dataDir, readImportQueueJobs } from "./import-queue.js";
 import { searchCommands } from "./search.js";
-import type { CategoryDataset, Command } from "./types.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -17,7 +17,6 @@ const datasetVersion = process.env.DATASET_VERSION ?? "2026-04-24";
 const databaseConfig = getDatabaseConfig();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dataDir = path.resolve(__dirname, "../../data");
 const corsOrigins = new Set(
   (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:3000")
     .split(",")
@@ -48,163 +47,7 @@ const upload = multer({
     fileSize: 1024 * 1024 * 2,
   },
 });
-const categoryIdSet = new Set(CATEGORIES.map((category) => category.id));
 
-function toNullableJson(value: unknown): string | null {
-  if (!value) {
-    return null;
-  }
-
-  if (Array.isArray(value) && value.length === 0) {
-    return null;
-  }
-
-  return JSON.stringify(value);
-}
-
-function normalizeCommand(raw: unknown): Omit<Command, "category"> {
-  if (!raw || typeof raw !== "object") {
-    throw new TypeError("Each command must be an object");
-  }
-
-  const command = raw as Partial<Omit<Command, "category">>;
-  if (!command.id || typeof command.id !== "string") {
-    throw new TypeError("Command id is required and must be string");
-  }
-
-  if (!command.title || typeof command.title !== "string") {
-    throw new TypeError(`Command '${command.id}' title is required`);
-  }
-
-  if (!command.command || typeof command.command !== "string") {
-    throw new TypeError(`Command '${command.id}' command is required`);
-  }
-
-  return {
-    id: command.id,
-    title: command.title,
-    command: command.command,
-    description: typeof command.description === "string" ? command.description : undefined,
-    docs: typeof command.docs === "string" ? command.docs : undefined,
-    tags: Array.isArray(command.tags) ? command.tags.filter((tag) => typeof tag === "string") : undefined,
-    placeholders: Array.isArray(command.placeholders) ? command.placeholders : undefined,
-    examples: Array.isArray(command.examples)
-      ? command.examples.filter((example) => typeof example === "string")
-      : undefined,
-    steps: Array.isArray(command.steps) ? command.steps : undefined,
-  };
-}
-
-function parseCategoryDataset(raw: unknown): CategoryDataset {
-  if (!raw || typeof raw !== "object") {
-    throw new TypeError("JSON must be an object");
-  }
-
-  const parsed = raw as Partial<CategoryDataset>;
-  if (!parsed.category || typeof parsed.category !== "string") {
-    throw new TypeError("Field 'category' is required and must be string");
-  }
-
-  if (!categoryIdSet.has(parsed.category)) {
-    throw new RangeError(`Unsupported category '${parsed.category}'`);
-  }
-
-  if (!Array.isArray(parsed.commands)) {
-    throw new TypeError("Field 'commands' is required and must be array");
-  }
-
-  return {
-    category: parsed.category,
-    commands: parsed.commands.map((item) => normalizeCommand(item)),
-  };
-}
-
-async function importDatasetToMariaDb(dataset: CategoryDataset): Promise<number> {
-  const categoryMeta = CATEGORIES.find((category) => category.id === dataset.category);
-  const pool = mariadb.createPool({
-    host: databaseConfig.mariadb.host,
-    port: databaseConfig.mariadb.port,
-    database: databaseConfig.mariadb.database,
-    user: databaseConfig.mariadb.user,
-    password: databaseConfig.mariadb.password,
-    connectionLimit: databaseConfig.mariadb.connectionLimit,
-    connectTimeout: databaseConfig.mariadb.connectTimeoutMs,
-  });
-
-  let connection: mariadb.PoolConnection | undefined;
-  try {
-    connection = await pool.getConnection();
-    await connection.beginTransaction();
-
-    await connection.query(
-      `
-        INSERT INTO categories (id, label, emoji, sort_order)
-        VALUES (?, ?, ?, 0)
-        ON DUPLICATE KEY UPDATE
-          label = VALUES(label),
-          emoji = VALUES(emoji)
-      `,
-      [dataset.category, categoryMeta?.label ?? dataset.category, categoryMeta?.emoji ?? "📁"],
-    );
-
-    for (const command of dataset.commands) {
-      await connection.query(
-        `
-          INSERT INTO commands (
-            id,
-            category_id,
-            title,
-            command_text,
-            description_text,
-            docs_text,
-            tags_json,
-            placeholders_json,
-            examples_json,
-            steps_json,
-            is_active
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-          ON DUPLICATE KEY UPDATE
-            category_id = VALUES(category_id),
-            title = VALUES(title),
-            command_text = VALUES(command_text),
-            description_text = VALUES(description_text),
-            docs_text = VALUES(docs_text),
-            tags_json = VALUES(tags_json),
-            placeholders_json = VALUES(placeholders_json),
-            examples_json = VALUES(examples_json),
-            steps_json = VALUES(steps_json),
-            is_active = 1
-        `,
-        [
-          command.id,
-          dataset.category,
-          command.title,
-          command.command,
-          command.description ?? null,
-          command.docs ?? null,
-          toNullableJson(command.tags),
-          toNullableJson(command.placeholders),
-          toNullableJson(command.examples),
-          toNullableJson(command.steps),
-        ],
-      );
-    }
-
-    await connection.commit();
-    return dataset.commands.length;
-  } catch (error) {
-    if (connection) {
-      await connection.rollback();
-    }
-    throw error;
-  } finally {
-    if (connection) {
-      connection.release();
-    }
-    await pool.end();
-  }
-}
 
 app.disable("x-powered-by");
 app.use(cors(corsOptions));
@@ -283,6 +126,15 @@ app.get(`${apiPrefix}/search`, (req, res) => {
   res.json({ data, version: datasetVersion });
 });
 
+app.get(`${apiPrefix}/import-queue`, async (_req, res, next) => {
+  try {
+    const data = await readImportQueueJobs();
+    res.json({ data, version: datasetVersion });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post(`${apiPrefix}/upload-json`, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
@@ -305,13 +157,7 @@ app.post(`${apiPrefix}/upload-json`, upload.single("file"), async (req, res) => 
 
     await fs.mkdir(dataDir, { recursive: true });
     await fs.writeFile(targetPath, uploadedContent, "utf-8");
-
-    let importedCommands = 0;
-    let databaseStatus: "imported" | "skipped" = "skipped";
-    if (databaseConfig.driver === "mariadb") {
-      importedCommands = await importDatasetToMariaDb(dataset);
-      databaseStatus = "imported";
-    }
+    const queueJob = await createImportQueueJob(safeFileName, targetPath, dataset);
 
     res.status(201).json({
       message: "JSON uploaded successfully",
@@ -320,8 +166,13 @@ app.post(`${apiPrefix}/upload-json`, upload.single("file"), async (req, res) => 
       category: dataset.category,
       database: {
         driver: databaseConfig.driver,
-        status: databaseStatus,
-        importedCommands,
+        status: "deferred",
+        importedCommands: 0,
+      },
+      queue: {
+        jobId: queueJob.jobId,
+        status: queueJob.status,
+        file: queueJob.queueFile,
       },
     });
   } catch (error) {
