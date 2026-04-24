@@ -1,5 +1,9 @@
 import cors from "cors";
 import express from "express";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import multer from "multer";
 import { ALL_COMMANDS, CATEGORIES, COMMAND_BY_ID } from "./catalog.js";
 import { getDatabaseConfig } from "./config/database.js";
 import { searchCommands } from "./search.js";
@@ -9,6 +13,9 @@ const port = Number(process.env.PORT ?? 8787);
 const apiPrefix = "/api/v1";
 const datasetVersion = process.env.DATASET_VERSION ?? "2026-04-24";
 const databaseConfig = getDatabaseConfig();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dataDir = path.resolve(__dirname, "../../data");
 const corsOrigins = new Set(
   (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:3000")
     .split(",")
@@ -30,8 +37,15 @@ const corsOptions: cors.CorsOptions = {
 
     callback(null, false);
   },
-  methods: ["GET", "OPTIONS"],
+  methods: ["GET", "POST", "OPTIONS"],
 };
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 1024 * 1024 * 2,
+  },
+});
 
 app.disable("x-powered-by");
 app.use(cors(corsOptions));
@@ -108,6 +122,38 @@ app.get(`${apiPrefix}/search`, (req, res) => {
   }));
 
   res.json({ data, version: datasetVersion });
+});
+
+app.post(`${apiPrefix}/upload-json`, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: "Missing file field 'file'" });
+      return;
+    }
+
+    if (!req.file.originalname.toLowerCase().endsWith(".json")) {
+      res.status(400).json({ error: "Only .json files are allowed" });
+      return;
+    }
+
+    const uploadedContent = req.file.buffer.toString("utf-8");
+    JSON.parse(uploadedContent);
+
+    const originalBaseName = path.basename(req.file.originalname);
+    const safeFileName = originalBaseName.replaceAll(/[^a-zA-Z0-9._-]/g, "_");
+    const targetPath = path.join(dataDir, safeFileName);
+
+    await fs.mkdir(dataDir, { recursive: true });
+    await fs.writeFile(targetPath, uploadedContent, "utf-8");
+
+    res.status(201).json({
+      message: "JSON uploaded successfully",
+      fileName: safeFileName,
+      savedTo: "data",
+    });
+  } catch {
+    res.status(400).json({ error: "Invalid JSON file content" });
+  }
 });
 
 app.listen(port, () => {

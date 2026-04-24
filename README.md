@@ -154,6 +154,27 @@ Vi du:
 GET /api/v1/search?q=pull&limit=5
 ```
 
+### 7) Upload JSON file
+
+- `POST /api/v1/upload-json`
+- Content-Type: `multipart/form-data`
+- Field bat buoc: `file`
+- Chi nhan file co duoi `.json`, kich thuoc toi da `2MB`.
+- File upload hop le se duoc luu vao thu muc `data/`.
+
+Vi du bang `curl`:
+
+```bash
+curl -X POST http://localhost:8787/api/v1/upload-json \
+  -F "file=@data/ssh.json"
+```
+
+Vi du bang PowerShell:
+
+```powershell
+curl.exe -X POST "http://localhost:8787/api/v1/upload-json" -F "file=@data/ssh.json"
+```
+
 ## Test nhanh bang PowerShell
 
 ```powershell
