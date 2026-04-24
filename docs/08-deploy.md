@@ -29,7 +29,7 @@ sudo apt update && sudo apt upgrade -y
 Cai cac goi can thiet:
 
 ```bash
-sudo apt install -y git curl nginx
+sudo apt install -y git curl nginx mariadb-server
 ```
 
 Cai Node.js LTS (khuyen nghi 20):
@@ -39,6 +39,20 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 node -v
 npm -v
+```
+
+Khoi tao MariaDB:
+
+```bash
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+sudo mysql_secure_installation
+```
+
+Tao database + schema:
+
+```bash
+sudo mysql -u root -p < /var/www/api-dev-quick-cmd/api/db/mariadb.schema.sql
 ```
 
 ## 3. Lay source code
@@ -92,10 +106,10 @@ Start app:
 
 ```bash
 cd /var/www/api-dev-quick-cmd/api
-PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
+DATABASE_DRIVER=mariadb DB_HOST=127.0.0.1 DB_PORT=3306 DB_NAME=api_dev_quick_cmd DB_USER=root DB_PASSWORD='<PASSWORD>' PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
 
 # Neu frontend dung origin rieng, bo sung CORS_ORIGINS:
-# CORS_ORIGINS="http://localhost:5173,https://app.example.com" PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
+# CORS_ORIGINS="http://localhost:5173,https://app.example.com" DATABASE_DRIVER=mariadb DB_HOST=127.0.0.1 DB_PORT=3306 DB_NAME=api_dev_quick_cmd DB_USER=root DB_PASSWORD='<PASSWORD>' PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
 ```
 
 Kiem tra:
@@ -111,6 +125,12 @@ Bat tu khoi dong cung he thong:
 ```bash
 pm2 startup
 pm2 save
+```
+
+Cap nhat bien moi truong khi da start truoc do:
+
+```bash
+pm2 restart api-dev-quick-cmd --update-env
 ```
 
 ## 6. Cau hinh Nginx reverse proxy

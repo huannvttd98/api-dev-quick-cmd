@@ -51,6 +51,14 @@ npm --prefix api run start
 - `PORT`: Port server (default `8787`).
 - `DATASET_VERSION`: Version string tra ve qua endpoint `/api/v1/version` (default `2026-04-24`).
 - `CORS_ORIGINS`: Danh sach origin duoc phep, tach boi dau phay (default `http://localhost:5173,http://localhost:3000`). Dung `*` de allow tat ca origin.
+- `DATABASE_DRIVER`: Che do data source (`json` hoac `mariadb`, default `json`).
+- `DB_HOST`: MariaDB host (default `127.0.0.1`).
+- `DB_PORT`: MariaDB port (default `3306`).
+- `DB_NAME`: Ten database (default `api_dev_quick_cmd`).
+- `DB_USER`: Username ket noi DB.
+- `DB_PASSWORD`: Password ket noi DB.
+- `DB_CONNECTION_LIMIT`: Gioi han ket noi pool (default `10`).
+- `DB_CONNECT_TIMEOUT_MS`: Timeout ket noi DB (default `10000`).
 
 Vi du (PowerShell):
 
@@ -58,6 +66,12 @@ Vi du (PowerShell):
 $env:PORT=9000
 $env:DATASET_VERSION="2026-05-01"
 $env:CORS_ORIGINS="http://localhost:5173,http://localhost:3000"
+$env:DATABASE_DRIVER="mariadb"
+$env:DB_HOST="127.0.0.1"
+$env:DB_PORT="3306"
+$env:DB_NAME="api_dev_quick_cmd"
+$env:DB_USER="root"
+$env:DB_PASSWORD=""
 npm --prefix api run dev
 ```
 
@@ -151,6 +165,9 @@ Invoke-RestMethod -Uri "http://localhost:8787/api/v1/search?q=pull&limit=5" | Co
 ## Ghi chu implementation
 
 - API load JSON truc tiep tu `data/*.json` trong `api/src/catalog.ts`.
+- Cau hinh database tap trung tai `api/src/config/database.ts`.
+- Mau bien moi truong tai `api/.env.example`.
+- SQL khoi tao MariaDB tai `api/db/mariadb.schema.sql`.
 - Du lieu dang in-memory, phu hop MVP va offline dataset.
 - Search dang dung scoring don gian trong `api/src/search.ts`.
 
