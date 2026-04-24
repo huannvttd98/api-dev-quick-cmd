@@ -6,11 +6,11 @@ Project nay cung cap bo du lieu command-line cho developer va mot REST API nho d
 
 - Luu tru command theo category (git, docker, laravel, linux, mysql, nginx, node, ssh, recipes).
 - Phuc vu extension hoac frontend thong qua API `/api/v1/*`.
-- Don gian, de chay local, khong can database.
+- API doc du lieu truc tiep tu MariaDB.
 
 ## Cau truc thu muc
 
-- `data/`: Nguon du lieu JSON (167 commands).
+- `data/`: JSON upload source va queue file cho import worker.
 - `docs/`: Tai lieu planning, architecture, migration.
 - `api/`: Node.js + TypeScript + Express server.
 
@@ -18,6 +18,7 @@ Project nay cung cap bo du lieu command-line cho developer va mot REST API nho d
 
 - Node.js 18+ (khuyen nghi Node.js 20+).
 - npm 9+.
+- MariaDB da duoc khoi tao schema.
 
 ## Chay API local
 
@@ -51,7 +52,7 @@ npm --prefix api run start
 - `PORT`: Port server (default `8787`).
 - `DATASET_VERSION`: Version string tra ve qua endpoint `/api/v1/version` (default `2026-04-24`).
 - `CORS_ORIGINS`: Danh sach origin duoc phep, tach boi dau phay (default `http://localhost:5173,http://localhost:3000`). Dung `*` de allow tat ca origin.
-- `DATABASE_DRIVER`: Che do data source (`json` hoac `mariadb`, default `json`).
+- `DATABASE_DRIVER`: Che do data source (`mariadb` hoac `json`, default `mariadb`).
 - `DB_HOST`: MariaDB host (default `127.0.0.1`).
 - `DB_PORT`: MariaDB port (default `3306`).
 - `DB_NAME`: Ten database (default `api_dev_quick_cmd`).
@@ -76,6 +77,8 @@ npm --prefix api run dev
 ```
 
 ## API Endpoints
+
+Tat ca endpoint doc du lieu (`categories`, `commands`, `command detail`, `search`) deu truy van tu MariaDB.
 
 ### 1) Health check
 
@@ -280,13 +283,13 @@ Invoke-RestMethod -Uri "http://localhost:8787/api/v1/import-queue" | ConvertTo-J
 
 ## Ghi chu implementation
 
-- API load JSON truc tiep tu `data/*.json` trong `api/src/catalog.ts`.
+- API doc categories va commands tu MariaDB thong qua `api/src/command-repository.ts`.
 - Cau hinh database tap trung tai `api/src/config/database.ts`.
 - Mau bien moi truong tai `api/.env.example`.
 - SQL khoi tao MariaDB tai `api/db/mariadb.schema.sql`.
 - Upload endpoint luu file JSON va tao queue file trong `data/import-queue`; import vao MariaDB do worker rieng dam nhiem.
 - Worker queue nam tai `api/src/worker.ts` va co lenh chay `npm --prefix api run worker`.
-- Du lieu dang in-memory, phu hop MVP va offline dataset.
+- File JSON khong con duoc dung lam source doc truc tiep cho API.
 - Search dang dung scoring don gian trong `api/src/search.ts`.
 
 ## Huong phat trien tiep

@@ -21,7 +21,7 @@ function toNumber(value: string | undefined, fallback: number): number {
 }
 
 export function getDatabaseConfig(env: NodeJS.ProcessEnv = process.env): DatabaseConfig {
-  const driverRaw = (env.DATABASE_DRIVER ?? "json").toLowerCase();
+  const driverRaw = (env.DATABASE_DRIVER ?? "mariadb").toLowerCase();
   const driver: DatabaseDriver = driverRaw === "mariadb" ? "mariadb" : "json";
 
   return {
