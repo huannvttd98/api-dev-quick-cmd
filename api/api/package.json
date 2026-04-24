@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "api-dev-quick-cmd-api": "file:.."
+  }
+}

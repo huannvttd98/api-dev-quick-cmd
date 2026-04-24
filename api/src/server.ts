@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { ALL_COMMANDS, CATEGORIES, COMMAND_BY_ID } from "./catalog.js";
 import { searchCommands } from "./search.js";
@@ -6,6 +7,31 @@ const app = express();
 const port = Number(process.env.PORT ?? 8787);
 const apiPrefix = "/api/v1";
 const datasetVersion = process.env.DATASET_VERSION ?? "2026-04-24";
+const corsOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:3000")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (corsOrigins.includes("*") || corsOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(null, false);
+  },
+  methods: ["GET", "OPTIONS"],
+};
+
+app.disable("x-powered-by");
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
