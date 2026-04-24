@@ -1,4 +1,4 @@
-import type { CategoryDataset, Command } from "../types";
+import type { CategoryDataset, Command } from "../types.ts";
 import apacheData from "./apache.json";
 import dockerData from "./docker.json";
 import gitData from "./git.json";

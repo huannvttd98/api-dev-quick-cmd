@@ -1,4 +1,4 @@
-import type { Category } from "../types";
+import type { Category } from "../types.ts";
 
 export const CATEGORIES: Category[] = [
   { id: "git", label: "Git", emoji: "🌿" },
