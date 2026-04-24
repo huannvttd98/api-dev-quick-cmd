@@ -50,12 +50,14 @@ npm --prefix api run start
 
 - `PORT`: Port server (default `8787`).
 - `DATASET_VERSION`: Version string tra ve qua endpoint `/api/v1/version` (default `2026-04-24`).
+- `CORS_ORIGINS`: Danh sach origin duoc phep, tach boi dau phay (default `http://localhost:5173,http://localhost:3000`). Dung `*` de allow tat ca origin.
 
 Vi du (PowerShell):
 
 ```powershell
 $env:PORT=9000
 $env:DATASET_VERSION="2026-05-01"
+$env:CORS_ORIGINS="http://localhost:5173,http://localhost:3000"
 npm --prefix api run dev
 ```
 
@@ -154,7 +156,6 @@ Invoke-RestMethod -Uri "http://localhost:8787/api/v1/search?q=pull&limit=5" | Co
 
 ## Huong phat trien tiep
 
-- Bo sung CORS cho extension/frontend production.
 - Them validate query params chuan hon (zod/valibot).
 - Them automated test endpoint (vitest + supertest).
 - Can nhac migration sang DB/API hosted theo tai lieu trong `docs/07-api-migration.md`.

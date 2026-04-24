@@ -93,6 +93,9 @@ Start app:
 ```bash
 cd /var/www/api-dev-quick-cmd/api
 PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
+
+# Neu frontend dung origin rieng, bo sung CORS_ORIGINS:
+# CORS_ORIGINS="http://localhost:5173,https://app.example.com" PORT=8787 DATASET_VERSION=2026-04-24 pm2 start dist/server.js --name api-dev-quick-cmd
 ```
 
 Kiem tra:
@@ -235,6 +238,14 @@ Kiem tra endpoint chinh:
 curl "https://api.example.com/api/v1/version"
 curl "https://api.example.com/api/v1/categories"
 curl "https://api.example.com/api/v1/search?q=pull&limit=5"
+
+Kiem tra CORS header (vi du cho frontend dev):
+
+```bash
+curl -i -H "Origin: http://localhost:5173" "https://api.example.com/api/v1/categories"
+```
+
+Response can co header `Access-Control-Allow-Origin`.
 ```
 
 ## 11. Troubleshooting nhanh

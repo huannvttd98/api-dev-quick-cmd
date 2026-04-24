@@ -7,10 +7,12 @@ const app = express();
 const port = Number(process.env.PORT ?? 8787);
 const apiPrefix = "/api/v1";
 const datasetVersion = process.env.DATASET_VERSION ?? "2026-04-24";
-const corsOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:3000")
-  .split(",")
-  .map((value) => value.trim())
-  .filter(Boolean);
+const corsOrigins = new Set(
+  (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:3000")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
@@ -19,7 +21,7 @@ const corsOptions: cors.CorsOptions = {
       return;
     }
 
-    if (corsOrigins.includes("*") || corsOrigins.includes(origin)) {
+    if (corsOrigins.has("*") || corsOrigins.has(origin)) {
       callback(null, true);
       return;
     }

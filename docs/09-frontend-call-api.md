@@ -57,6 +57,12 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8787
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 ```
 
+Luu y CORS phia API:
+
+- API da bat CORS middleware.
+- Origin duoc phep duoc dieu khien boi bien moi truong `CORS_ORIGINS` o backend.
+- Khi frontend doi port/domain, cap nhat `CORS_ORIGINS` tren server.
+
 ## 4. Tao API client voi fetch
 
 ```ts
@@ -274,8 +280,9 @@ GET http://localhost:8787/api/v1/search?q=pull&limit=5
 
 Neu bi loi CORS khi frontend va API khac domain/port:
 
-- Can bo sung CORS middleware trong API.
-- Hoac dung reverse proxy de frontend va API cung origin.
+- Kiem tra bien `CORS_ORIGINS` da chua origin frontend chua (vd `http://localhost:5173`).
+- Kiem tra response header co `Access-Control-Allow-Origin` khong.
+- Neu can don gian hon cho moi truong test, dat `CORS_ORIGINS=*`.
 
 ## 9. Checklist tich hop frontend
 
