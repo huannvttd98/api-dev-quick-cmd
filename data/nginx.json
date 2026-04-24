@@ -1,0 +1,99 @@
+{
+  "category": "nginx",
+  "commands": [
+    {
+      "id": "nginx.test-config",
+      "title": "Test config syntax",
+      "command": "sudo nginx -t",
+      "description": "Luôn chạy trước khi reload/restart",
+      "tags": ["config", "test"]
+    },
+    {
+      "id": "nginx.reload",
+      "title": "Reload (graceful)",
+      "command": "sudo systemctl reload nginx",
+      "description": "Không đứt kết nối hiện tại",
+      "tags": ["reload"]
+    },
+    {
+      "id": "nginx.restart",
+      "title": "Restart",
+      "command": "sudo systemctl restart nginx",
+      "tags": ["restart"]
+    },
+    {
+      "id": "nginx.status",
+      "title": "Service status",
+      "command": "sudo systemctl status nginx",
+      "tags": ["status"]
+    },
+    {
+      "id": "nginx.start",
+      "title": "Start",
+      "command": "sudo systemctl start nginx",
+      "tags": ["start"]
+    },
+    {
+      "id": "nginx.stop",
+      "title": "Stop",
+      "command": "sudo systemctl stop nginx",
+      "tags": ["stop"]
+    },
+    {
+      "id": "nginx.enable",
+      "title": "Enable on boot",
+      "command": "sudo systemctl enable nginx",
+      "tags": ["boot"]
+    },
+    {
+      "id": "nginx.error-log",
+      "title": "Follow error log",
+      "command": "sudo tail -f /var/log/nginx/error.log",
+      "tags": ["log", "error", "debug"]
+    },
+    {
+      "id": "nginx.access-log",
+      "title": "Follow access log",
+      "command": "sudo tail -f /var/log/nginx/access.log",
+      "tags": ["log", "access"]
+    },
+    {
+      "id": "nginx.config-path",
+      "title": "Edit main config",
+      "command": "sudo nano /etc/nginx/nginx.conf",
+      "tags": ["config", "edit"]
+    },
+    {
+      "id": "nginx.sites-enabled",
+      "title": "List enabled sites",
+      "command": "ls /etc/nginx/sites-enabled/",
+      "tags": ["sites"]
+    },
+    {
+      "id": "nginx.enable-site",
+      "title": "Enable site (symlink)",
+      "command": "sudo ln -s /etc/nginx/sites-available/{{site}} /etc/nginx/sites-enabled/",
+      "tags": ["sites", "enable"],
+      "placeholders": [{ "key": "site", "hint": "Tên site config" }]
+    },
+    {
+      "id": "nginx.disable-site",
+      "title": "Disable site",
+      "command": "sudo rm /etc/nginx/sites-enabled/{{site}}",
+      "tags": ["sites", "disable"],
+      "placeholders": [{ "key": "site", "hint": "Tên site config" }]
+    },
+    {
+      "id": "nginx.version",
+      "title": "Version + compile info",
+      "command": "nginx -V",
+      "tags": ["version", "info"]
+    },
+    {
+      "id": "nginx.check-processes",
+      "title": "Check nginx processes",
+      "command": "ps aux | grep nginx",
+      "tags": ["process", "debug"]
+    }
+  ]
+}

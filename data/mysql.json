@@ -1,0 +1,161 @@
+{
+  "category": "mysql",
+  "commands": [
+    {
+      "id": "mysql.connect",
+      "title": "Connect với root",
+      "command": "mysql -u root -p",
+      "tags": ["connect", "login"]
+    },
+    {
+      "id": "mysql.connect-user",
+      "title": "Connect với user và database",
+      "command": "mysql -u {{user}} -p {{database}}",
+      "tags": ["connect"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "database", "hint": "Database name" }
+      ]
+    },
+    {
+      "id": "mysql.show-databases",
+      "title": "Show databases",
+      "command": "SHOW DATABASES;",
+      "tags": ["database", "list"]
+    },
+    {
+      "id": "mysql.use",
+      "title": "Use database",
+      "command": "USE {{database}};",
+      "tags": ["database"],
+      "placeholders": [{ "key": "database", "hint": "Database name" }]
+    },
+    {
+      "id": "mysql.show-tables",
+      "title": "Show tables",
+      "command": "SHOW TABLES;",
+      "tags": ["table", "list"]
+    },
+    {
+      "id": "mysql.describe",
+      "title": "Describe table schema",
+      "command": "DESCRIBE {{table}};",
+      "tags": ["schema"],
+      "placeholders": [{ "key": "table", "hint": "Table name" }]
+    },
+    {
+      "id": "mysql.create-database",
+      "title": "Create database (utf8mb4)",
+      "command": "CREATE DATABASE {{name}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
+      "tags": ["database", "create"],
+      "placeholders": [{ "key": "name", "hint": "Database name" }]
+    },
+    {
+      "id": "mysql.drop-database",
+      "title": "Drop database (danger)",
+      "command": "DROP DATABASE {{name}};",
+      "tags": ["database", "delete", "danger"],
+      "placeholders": [{ "key": "name", "hint": "Database name" }]
+    },
+    {
+      "id": "mysql.create-user",
+      "title": "Create user",
+      "command": "CREATE USER '{{user}}'@'localhost' IDENTIFIED BY '{{password}}';",
+      "tags": ["user", "create"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "password", "hint": "Password" }
+      ]
+    },
+    {
+      "id": "mysql.grant-all",
+      "title": "Grant all privileges on database",
+      "command": "GRANT ALL PRIVILEGES ON {{database}}.* TO '{{user}}'@'localhost';",
+      "tags": ["user", "privileges"],
+      "placeholders": [
+        { "key": "database", "hint": "Database (hoặc *)" },
+        { "key": "user", "hint": "Username" }
+      ]
+    },
+    {
+      "id": "mysql.flush-privileges",
+      "title": "Flush privileges",
+      "command": "FLUSH PRIVILEGES;",
+      "tags": ["user", "reload"]
+    },
+    {
+      "id": "mysql.show-processlist",
+      "title": "Show active processes",
+      "command": "SHOW PROCESSLIST;",
+      "tags": ["monitor", "process"]
+    },
+    {
+      "id": "mysql.show-variables",
+      "title": "Show variable",
+      "command": "SHOW VARIABLES LIKE '%{{pattern}}%';",
+      "tags": ["config"],
+      "placeholders": [{ "key": "pattern", "hint": "Pattern (vd: max_connections)" }]
+    },
+    {
+      "id": "mysql.dump",
+      "title": "Dump database ra file",
+      "command": "mysqldump -u {{user}} -p {{database}} > {{file}}.sql",
+      "tags": ["backup", "export"],
+      "placeholders": [
+        { "key": "user", "hint": "Username", "default": "root" },
+        { "key": "database", "hint": "Database" },
+        { "key": "file", "hint": "Tên file output" }
+      ]
+    },
+    {
+      "id": "mysql.restore",
+      "title": "Restore database từ file",
+      "command": "mysql -u {{user}} -p {{database}} < {{file}}.sql",
+      "tags": ["restore", "import"],
+      "placeholders": [
+        { "key": "user", "hint": "Username", "default": "root" },
+        { "key": "database", "hint": "Database" },
+        { "key": "file", "hint": "File .sql" }
+      ]
+    },
+    {
+      "id": "mysql.dump-gzip",
+      "title": "Dump + gzip",
+      "command": "mysqldump -u {{user}} -p {{database}} | gzip > {{file}}.sql.gz",
+      "tags": ["backup", "compress"],
+      "placeholders": [
+        { "key": "user", "hint": "Username", "default": "root" },
+        { "key": "database", "hint": "Database" },
+        { "key": "file", "hint": "Tên file" }
+      ]
+    },
+    {
+      "id": "mysql.optimize-table",
+      "title": "Optimize table",
+      "command": "OPTIMIZE TABLE {{table}};",
+      "tags": ["maintenance"],
+      "placeholders": [{ "key": "table", "hint": "Table name" }]
+    },
+    {
+      "id": "mysql.repair-table",
+      "title": "Repair table",
+      "command": "REPAIR TABLE {{table}};",
+      "tags": ["maintenance"],
+      "placeholders": [{ "key": "table", "hint": "Table name" }]
+    },
+    {
+      "id": "mysql.kill-query",
+      "title": "Kill running query",
+      "command": "KILL {{id}};",
+      "tags": ["process", "kill"],
+      "placeholders": [{ "key": "id", "hint": "Process ID (từ SHOW PROCESSLIST)" }]
+    },
+    {
+      "id": "mysql.show-status",
+      "title": "Show server status",
+      "command": "SHOW GLOBAL STATUS LIKE '%{{pattern}}%';",
+      "tags": ["monitor"],
+      "placeholders": [{ "key": "pattern", "hint": "Pattern (vd: Threads)" }]
+    }
+  ]
+}

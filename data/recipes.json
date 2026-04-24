@@ -1,0 +1,152 @@
+{
+  "category": "recipes",
+  "commands": [
+    {
+      "id": "recipes.nginx-reverse-proxy",
+      "title": "Mở port qua Nginx reverse proxy",
+      "command": "sudo systemctl reload nginx",
+      "description": "Expose app nội bộ (vd localhost:3000) ra public qua domain + port 80/443",
+      "tags": ["nginx", "port", "proxy", "setup"],
+      "docs": "Scenario: bạn có 1 app đang chạy ở localhost:3000 (Node/Next/Laravel/...) và muốn truy cập qua http://example.com.\n\nNginx sẽ nhận request ở port 80, forward về app nội bộ. Đây là cách chuẩn để expose app production.\n\nYêu cầu:\n• Nginx đã cài (sudo apt install nginx)\n• App đang chạy và listen ở 127.0.0.1:<PORT>\n• DNS của domain trỏ về IP server",
+      "steps": [
+        {
+          "title": "1. Tạo file config site mới",
+          "command": "sudo nano /etc/nginx/sites-available/example.com",
+          "description": "Đặt tên file theo domain để dễ quản lý"
+        },
+        {
+          "title": "2. Dán nội dung server block",
+          "command": "server {\n    listen 80;\n    server_name example.com www.example.com;\n\n    location / {\n        proxy_pass http://127.0.0.1:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection 'upgrade';\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto $scheme;\n        proxy_cache_bypass $http_upgrade;\n    }\n}",
+          "description": "Thay example.com và port 3000 theo thực tế"
+        },
+        {
+          "title": "3. Enable site (tạo symlink)",
+          "command": "sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/",
+          "description": "Nginx chỉ load config từ sites-enabled"
+        },
+        {
+          "title": "4. Test config syntax",
+          "command": "sudo nginx -t",
+          "description": "BẮT BUỘC — nếu sai syntax thì reload ở step sau sẽ fail và nginx có thể ngừng"
+        },
+        {
+          "title": "5. Reload nginx (graceful)",
+          "command": "sudo systemctl reload nginx",
+          "description": "reload không làm đứt kết nối hiện tại (khác với restart)"
+        },
+        {
+          "title": "6. Mở firewall port 80/443",
+          "command": "sudo ufw allow 'Nginx Full'",
+          "description": "Chỉ cần nếu đang dùng UFW. 'Nginx Full' = port 80 + 443"
+        },
+        {
+          "title": "7. (Optional) Cài HTTPS miễn phí với Let's Encrypt",
+          "command": "sudo certbot --nginx -d example.com -d www.example.com",
+          "description": "Cần cài certbot trước: sudo apt install certbot python3-certbot-nginx"
+        },
+        {
+          "title": "8. Test từ browser",
+          "command": "curl -I http://example.com",
+          "description": "Nếu thấy 200/301/302 là OK. Nếu 502 Bad Gateway → app nội bộ chưa chạy hoặc sai port. Nếu không response → DNS/firewall."
+        }
+      ]
+    },
+    {
+      "id": "recipes.nginx-expose-custom-port",
+      "title": "Expose app ở port tuỳ ý (vd 8080) qua Nginx",
+      "command": "sudo nginx -t && sudo systemctl reload nginx",
+      "description": "Khi muốn app listen public ở port không phải 80/443",
+      "tags": ["nginx", "port", "setup"],
+      "docs": "Dùng khi bạn muốn user truy cập qua http://server.com:8080 thay vì port 80.\n\nNginx listen ở port 8080, forward về app nội bộ.",
+      "steps": [
+        {
+          "title": "1. Tạo config",
+          "command": "sudo nano /etc/nginx/sites-available/app-8080"
+        },
+        {
+          "title": "2. Server block listen port 8080",
+          "command": "server {\n    listen 8080;\n    server_name _;\n\n    location / {\n        proxy_pass http://127.0.0.1:3000;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n    }\n}",
+          "description": "server_name _ nghĩa là match mọi host (không kén)"
+        },
+        {
+          "title": "3. Enable site",
+          "command": "sudo ln -s /etc/nginx/sites-available/app-8080 /etc/nginx/sites-enabled/"
+        },
+        {
+          "title": "4. Test + reload",
+          "command": "sudo nginx -t && sudo systemctl reload nginx"
+        },
+        {
+          "title": "5. Mở firewall cho port 8080",
+          "command": "sudo ufw allow 8080/tcp"
+        },
+        {
+          "title": "6. Kiểm tra port đang listen",
+          "command": "sudo ss -tlnp | grep 8080",
+          "description": "Phải thấy nginx listen ở port 8080"
+        }
+      ]
+    },
+    {
+      "id": "recipes.nginx-disable-site",
+      "title": "Disable / xoá config site",
+      "command": "sudo rm /etc/nginx/sites-enabled/{{site}}",
+      "description": "Ngưng phục vụ 1 site nhưng giữ config để bật lại sau",
+      "tags": ["nginx", "disable"],
+      "placeholders": [{ "key": "site", "hint": "Tên file site trong sites-enabled" }],
+      "steps": [
+        {
+          "title": "1. Xoá symlink trong sites-enabled",
+          "command": "sudo rm /etc/nginx/sites-enabled/example.com",
+          "description": "File gốc trong sites-available vẫn còn — có thể symlink lại sau"
+        },
+        {
+          "title": "2. Test config",
+          "command": "sudo nginx -t"
+        },
+        {
+          "title": "3. Reload",
+          "command": "sudo systemctl reload nginx"
+        },
+        {
+          "title": "4. (Tuỳ chọn) Xoá luôn config file gốc",
+          "command": "sudo rm /etc/nginx/sites-available/example.com",
+          "description": "Chỉ làm khi chắc chắn không dùng lại"
+        }
+      ]
+    },
+    {
+      "id": "recipes.ssh-setup-key",
+      "title": "Setup SSH key-based auth tới server",
+      "command": "ssh-copy-id {{user}}@{{host}}",
+      "description": "Login server không cần nhập password mỗi lần",
+      "tags": ["ssh", "key", "setup"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Server host/IP" }
+      ],
+      "steps": [
+        {
+          "title": "1. Tạo ed25519 key (nếu chưa có)",
+          "command": "ssh-keygen -t ed25519 -C \"your_email@example.com\"",
+          "description": "Nhấn Enter dùng default path. Optionally set passphrase."
+        },
+        {
+          "title": "2. Copy public key lên server",
+          "command": "ssh-copy-id user@host",
+          "description": "Lần này vẫn phải nhập password server"
+        },
+        {
+          "title": "3. Test login không cần password",
+          "command": "ssh user@host",
+          "description": "Nếu không hỏi password là thành công"
+        },
+        {
+          "title": "4. (Optional) Disable password auth trên server",
+          "command": "sudo nano /etc/ssh/sshd_config",
+          "description": "Set PasswordAuthentication no, rồi sudo systemctl reload sshd. Làm khi đã CHẮC CHẮN key hoạt động — nếu key mất thì mất luôn access."
+        }
+      ]
+    }
+  ]
+}

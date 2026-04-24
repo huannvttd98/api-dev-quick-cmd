@@ -1,0 +1,140 @@
+{
+  "category": "ssh",
+  "commands": [
+    {
+      "id": "ssh.connect",
+      "title": "SSH connect",
+      "command": "ssh {{user}}@{{host}}",
+      "tags": ["connect"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host/IP" }
+      ]
+    },
+    {
+      "id": "ssh.connect-port",
+      "title": "SSH với custom port",
+      "command": "ssh -p {{port}} {{user}}@{{host}}",
+      "tags": ["connect", "port"],
+      "placeholders": [
+        { "key": "port", "hint": "Port", "default": "22" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host/IP" }
+      ]
+    },
+    {
+      "id": "ssh.connect-key",
+      "title": "SSH với identity file",
+      "command": "ssh -i {{key}} {{user}}@{{host}}",
+      "tags": ["connect", "key"],
+      "placeholders": [
+        { "key": "key", "hint": "Path tới key file" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host/IP" }
+      ]
+    },
+    {
+      "id": "ssh.keygen",
+      "title": "Generate ed25519 key",
+      "command": "ssh-keygen -t ed25519 -C \"{{email}}\"",
+      "description": "Key hiện đại, an toàn hơn RSA",
+      "tags": ["key", "generate"],
+      "placeholders": [{ "key": "email", "hint": "Email cho comment" }]
+    },
+    {
+      "id": "ssh.copy-id",
+      "title": "Copy public key lên server",
+      "command": "ssh-copy-id {{user}}@{{host}}",
+      "tags": ["key", "setup"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" }
+      ]
+    },
+    {
+      "id": "ssh.scp-upload",
+      "title": "SCP upload file",
+      "command": "scp {{file}} {{user}}@{{host}}:{{path}}",
+      "tags": ["scp", "upload"],
+      "placeholders": [
+        { "key": "file", "hint": "Local file" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" },
+        { "key": "path", "hint": "Remote path", "default": "~/" }
+      ]
+    },
+    {
+      "id": "ssh.scp-download",
+      "title": "SCP download file",
+      "command": "scp {{user}}@{{host}}:{{path}} .",
+      "tags": ["scp", "download"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" },
+        { "key": "path", "hint": "Remote file path" }
+      ]
+    },
+    {
+      "id": "ssh.scp-dir",
+      "title": "SCP upload thư mục",
+      "command": "scp -r {{dir}} {{user}}@{{host}}:{{path}}",
+      "tags": ["scp", "upload", "recursive"],
+      "placeholders": [
+        { "key": "dir", "hint": "Local directory" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" },
+        { "key": "path", "hint": "Remote path", "default": "~/" }
+      ]
+    },
+    {
+      "id": "ssh.rsync",
+      "title": "Rsync (sync tối ưu)",
+      "command": "rsync -avz {{src}} {{user}}@{{host}}:{{dest}}",
+      "description": "Nhanh hơn scp, chỉ transfer diff",
+      "tags": ["sync", "upload"],
+      "placeholders": [
+        { "key": "src", "hint": "Local path" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" },
+        { "key": "dest", "hint": "Remote path" }
+      ]
+    },
+    {
+      "id": "ssh.tunnel-local",
+      "title": "Local port forward (tunnel)",
+      "command": "ssh -L {{local_port}}:localhost:{{remote_port}} {{user}}@{{host}}",
+      "description": "Access remote service qua local port",
+      "tags": ["tunnel", "forward"],
+      "placeholders": [
+        { "key": "local_port", "hint": "Local port", "default": "8080" },
+        { "key": "remote_port", "hint": "Remote port" },
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" }
+      ]
+    },
+    {
+      "id": "ssh.run-command",
+      "title": "Run command từ xa",
+      "command": "ssh {{user}}@{{host}} \"{{cmd}}\"",
+      "tags": ["remote", "execute"],
+      "placeholders": [
+        { "key": "user", "hint": "Username" },
+        { "key": "host", "hint": "Host" },
+        { "key": "cmd", "hint": "Command to run" }
+      ]
+    },
+    {
+      "id": "ssh.config-edit",
+      "title": "Edit SSH config",
+      "command": "nano ~/.ssh/config",
+      "tags": ["config"]
+    },
+    {
+      "id": "ssh.fix-permissions",
+      "title": "Fix .ssh permissions",
+      "command": "chmod 700 ~/.ssh && chmod 600 ~/.ssh/*",
+      "description": "SSH sẽ không chấp nhận key nếu permission sai",
+      "tags": ["fix", "permissions"]
+    }
+  ]
+}

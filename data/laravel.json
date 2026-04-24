@@ -1,0 +1,157 @@
+{
+  "category": "laravel",
+  "commands": [
+    {
+      "id": "laravel.serve",
+      "title": "Start dev server",
+      "command": "php artisan serve",
+      "tags": ["server", "dev"]
+    },
+    {
+      "id": "laravel.migrate",
+      "title": "Run migrations",
+      "command": "php artisan migrate",
+      "tags": ["database", "migration"]
+    },
+    {
+      "id": "laravel.migrate-fresh",
+      "title": "Drop all + re-migrate + seed",
+      "command": "php artisan migrate:fresh --seed",
+      "description": "Cẩn thận — xoá hết data",
+      "tags": ["database", "reset", "danger"]
+    },
+    {
+      "id": "laravel.migrate-rollback",
+      "title": "Rollback last migration batch",
+      "command": "php artisan migrate:rollback",
+      "tags": ["database", "undo"]
+    },
+    {
+      "id": "laravel.migrate-status",
+      "title": "Migration status",
+      "command": "php artisan migrate:status",
+      "tags": ["database", "check"]
+    },
+    {
+      "id": "laravel.make-model",
+      "title": "Tạo Model",
+      "command": "php artisan make:model {{name}} -mfs",
+      "description": "-m tạo migration, -f factory, -s seeder",
+      "tags": ["generate", "model"],
+      "placeholders": [{ "key": "name", "hint": "Tên model (vd: Post)" }]
+    },
+    {
+      "id": "laravel.make-controller",
+      "title": "Tạo Controller",
+      "command": "php artisan make:controller {{name}}Controller --resource",
+      "tags": ["generate", "controller"],
+      "placeholders": [{ "key": "name", "hint": "Tên (vd: Post)" }]
+    },
+    {
+      "id": "laravel.make-migration",
+      "title": "Tạo Migration",
+      "command": "php artisan make:migration {{name}}",
+      "tags": ["generate", "migration"],
+      "placeholders": [{ "key": "name", "hint": "Tên migration (snake_case)" }]
+    },
+    {
+      "id": "laravel.make-seeder",
+      "title": "Tạo Seeder",
+      "command": "php artisan make:seeder {{name}}Seeder",
+      "tags": ["generate", "seed"],
+      "placeholders": [{ "key": "name", "hint": "Tên (vd: Post)" }]
+    },
+    {
+      "id": "laravel.make-request",
+      "title": "Tạo Form Request",
+      "command": "php artisan make:request {{name}}Request",
+      "tags": ["generate", "validation"],
+      "placeholders": [{ "key": "name", "hint": "Tên (vd: StorePost)" }]
+    },
+    {
+      "id": "laravel.make-middleware",
+      "title": "Tạo Middleware",
+      "command": "php artisan make:middleware {{name}}",
+      "tags": ["generate", "middleware"],
+      "placeholders": [{ "key": "name", "hint": "Tên middleware" }]
+    },
+    {
+      "id": "laravel.make-command",
+      "title": "Tạo Artisan Command",
+      "command": "php artisan make:command {{name}}",
+      "tags": ["generate", "cli"],
+      "placeholders": [{ "key": "name", "hint": "Tên command class" }]
+    },
+    {
+      "id": "laravel.make-resource",
+      "title": "Tạo API Resource",
+      "command": "php artisan make:resource {{name}}Resource",
+      "tags": ["generate", "api"],
+      "placeholders": [{ "key": "name", "hint": "Tên resource" }]
+    },
+    {
+      "id": "laravel.cache-clear-all",
+      "title": "Clear all caches",
+      "command": "php artisan optimize:clear",
+      "description": "Clear config + route + view + cache + compiled",
+      "tags": ["cache", "clear"]
+    },
+    {
+      "id": "laravel.config-cache",
+      "title": "Cache config (production)",
+      "command": "php artisan config:cache",
+      "tags": ["cache", "production"]
+    },
+    {
+      "id": "laravel.route-cache",
+      "title": "Cache routes (production)",
+      "command": "php artisan route:cache",
+      "tags": ["cache", "production"]
+    },
+    {
+      "id": "laravel.view-cache",
+      "title": "Cache views (production)",
+      "command": "php artisan view:cache",
+      "tags": ["cache", "production"]
+    },
+    {
+      "id": "laravel.optimize",
+      "title": "Optimize toàn bộ",
+      "command": "php artisan optimize",
+      "tags": ["production", "cache"]
+    },
+    {
+      "id": "laravel.queue-work",
+      "title": "Chạy queue worker",
+      "command": "php artisan queue:work --tries=3",
+      "tags": ["queue", "worker"]
+    },
+    {
+      "id": "laravel.queue-retry-all",
+      "title": "Retry tất cả failed jobs",
+      "command": "php artisan queue:retry all",
+      "tags": ["queue", "retry"]
+    },
+    {
+      "id": "laravel.tinker",
+      "title": "Tinker REPL",
+      "command": "php artisan tinker",
+      "tags": ["repl", "debug"]
+    },
+    {
+      "id": "laravel.route-list",
+      "title": "List tất cả routes",
+      "command": "php artisan route:list",
+      "tags": ["route", "list"]
+    },
+    {
+      "id": "laravel.db-seed",
+      "title": "Chạy seeder",
+      "command": "php artisan db:seed --class={{seeder}}",
+      "tags": ["database", "seed"],
+      "placeholders": [
+        { "key": "seeder", "hint": "Tên seeder class", "default": "DatabaseSeeder" }
+      ]
+    }
+  ]
+}

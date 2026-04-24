@@ -1,0 +1,162 @@
+{
+  "category": "docker",
+  "commands": [
+    {
+      "id": "docker.ps",
+      "title": "List running containers",
+      "command": "docker ps",
+      "tags": ["list", "running"]
+    },
+    {
+      "id": "docker.ps-all",
+      "title": "List all containers (including stopped)",
+      "command": "docker ps -a",
+      "tags": ["list", "all"]
+    },
+    {
+      "id": "docker.images",
+      "title": "List images",
+      "command": "docker images",
+      "tags": ["list", "image"]
+    },
+    {
+      "id": "docker.run",
+      "title": "Run container from image",
+      "command": "docker run {{image}}",
+      "tags": ["run", "start"],
+      "placeholders": [{ "key": "image", "hint": "Tên image (vd: nginx:latest)" }]
+    },
+    {
+      "id": "docker.run-detached",
+      "title": "Run detached với tên",
+      "command": "docker run -d --name {{name}} {{image}}",
+      "description": "Chạy container ở background với tên cụ thể",
+      "tags": ["run", "background"],
+      "placeholders": [
+        { "key": "name", "hint": "Tên container" },
+        { "key": "image", "hint": "Image" }
+      ],
+      "docs": "Flags:\n• -d (detached): chạy background, không block terminal\n• --name: đặt tên cố định để dễ reference (stop, logs, exec)\n\nCó thể thêm -p port mapping, -v volume, -e env vars.",
+      "examples": [
+        "docker run -d --name mynginx nginx:alpine",
+        "docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=secret -p 3306:3306 mysql:8",
+        "docker run -d --name redis -p 6379:6379 redis:7-alpine"
+      ]
+    },
+    {
+      "id": "docker.stop",
+      "title": "Stop container",
+      "command": "docker stop {{container}}",
+      "tags": ["stop"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.start",
+      "title": "Start container",
+      "command": "docker start {{container}}",
+      "tags": ["start"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.restart",
+      "title": "Restart container",
+      "command": "docker restart {{container}}",
+      "tags": ["restart"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.rm",
+      "title": "Remove container",
+      "command": "docker rm {{container}}",
+      "tags": ["delete", "cleanup"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.rmi",
+      "title": "Remove image",
+      "command": "docker rmi {{image}}",
+      "tags": ["delete", "image"],
+      "placeholders": [{ "key": "image", "hint": "Image ID/tag" }]
+    },
+    {
+      "id": "docker.logs",
+      "title": "Follow container logs",
+      "command": "docker logs -f {{container}}",
+      "tags": ["logs", "debug"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.exec-bash",
+      "title": "Shell vào container",
+      "command": "docker exec -it {{container}} bash",
+      "description": "Nếu bash không có thì đổi sang sh",
+      "tags": ["shell", "debug"],
+      "placeholders": [{ "key": "container", "hint": "Container ID/name" }]
+    },
+    {
+      "id": "docker.pull",
+      "title": "Pull image",
+      "command": "docker pull {{image}}",
+      "tags": ["download", "image"],
+      "placeholders": [{ "key": "image", "hint": "Image tag" }]
+    },
+    {
+      "id": "docker.build",
+      "title": "Build image từ Dockerfile",
+      "command": "docker build -t {{tag}} .",
+      "tags": ["build", "image"],
+      "placeholders": [{ "key": "tag", "hint": "Tag cho image (vd: myapp:1.0)" }]
+    },
+    {
+      "id": "docker.compose-up",
+      "title": "Compose up (detached)",
+      "command": "docker compose up -d",
+      "tags": ["compose", "start"]
+    },
+    {
+      "id": "docker.compose-down",
+      "title": "Compose down",
+      "command": "docker compose down",
+      "tags": ["compose", "stop"]
+    },
+    {
+      "id": "docker.compose-logs",
+      "title": "Compose follow logs",
+      "command": "docker compose logs -f",
+      "tags": ["compose", "logs"]
+    },
+    {
+      "id": "docker.compose-restart",
+      "title": "Compose restart service",
+      "command": "docker compose restart {{service}}",
+      "tags": ["compose", "restart"],
+      "placeholders": [{ "key": "service", "hint": "Tên service trong docker-compose.yml" }]
+    },
+    {
+      "id": "docker.prune-all",
+      "title": "Prune all (cẩn thận)",
+      "command": "docker system prune -af --volumes",
+      "description": "Xoá tất cả container, image, volume không dùng",
+      "tags": ["cleanup", "danger"]
+    },
+    {
+      "id": "docker.volume-ls",
+      "title": "List volumes",
+      "command": "docker volume ls",
+      "tags": ["volume", "list"]
+    },
+    {
+      "id": "docker.network-ls",
+      "title": "List networks",
+      "command": "docker network ls",
+      "tags": ["network", "list"]
+    },
+    {
+      "id": "docker.inspect",
+      "title": "Inspect container/image",
+      "command": "docker inspect {{target}}",
+      "tags": ["debug", "info"],
+      "placeholders": [{ "key": "target", "hint": "Container/image ID/name" }]
+    }
+  ]
+}

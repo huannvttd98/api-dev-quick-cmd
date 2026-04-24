@@ -1,0 +1,220 @@
+{
+  "category": "linux",
+  "commands": [
+    {
+      "id": "linux.ls",
+      "title": "List với detail",
+      "command": "ls -lah",
+      "description": "Long format, all files, human-readable sizes",
+      "tags": ["list", "files"]
+    },
+    {
+      "id": "linux.pwd",
+      "title": "Print working directory",
+      "command": "pwd",
+      "tags": ["path"]
+    },
+    {
+      "id": "linux.mkdir",
+      "title": "Make directory (nested)",
+      "command": "mkdir -p {{path}}",
+      "tags": ["create", "directory"],
+      "placeholders": [{ "key": "path", "hint": "Đường dẫn thư mục" }]
+    },
+    {
+      "id": "linux.rm-rf",
+      "title": "Remove directory recursive (danger)",
+      "command": "rm -rf {{path}}",
+      "description": "Không thể undo",
+      "tags": ["delete", "danger"],
+      "placeholders": [{ "key": "path", "hint": "Đường dẫn" }]
+    },
+    {
+      "id": "linux.cp",
+      "title": "Copy file/directory",
+      "command": "cp -r {{src}} {{dest}}",
+      "tags": ["copy"],
+      "placeholders": [
+        { "key": "src", "hint": "Nguồn" },
+        { "key": "dest", "hint": "Đích" }
+      ]
+    },
+    {
+      "id": "linux.mv",
+      "title": "Move / rename",
+      "command": "mv {{src}} {{dest}}",
+      "tags": ["move", "rename"],
+      "placeholders": [
+        { "key": "src", "hint": "Nguồn" },
+        { "key": "dest", "hint": "Đích" }
+      ]
+    },
+    {
+      "id": "linux.chmod",
+      "title": "Change permissions",
+      "command": "chmod {{mode}} {{file}}",
+      "description": "Ví dụ: 755, +x",
+      "tags": ["permissions"],
+      "placeholders": [
+        { "key": "mode", "hint": "Mode (vd: 755)", "default": "755" },
+        { "key": "file", "hint": "File path" }
+      ]
+    },
+    {
+      "id": "linux.chown",
+      "title": "Change owner",
+      "command": "sudo chown -R {{user}}:{{group}} {{path}}",
+      "tags": ["owner", "permissions"],
+      "placeholders": [
+        { "key": "user", "hint": "User" },
+        { "key": "group", "hint": "Group" },
+        { "key": "path", "hint": "Đường dẫn" }
+      ]
+    },
+    {
+      "id": "linux.grep",
+      "title": "Grep trong file",
+      "command": "grep -rn \"{{pattern}}\" {{path}}",
+      "description": "Recursive, show line numbers",
+      "tags": ["search", "find"],
+      "placeholders": [
+        { "key": "pattern", "hint": "Pattern" },
+        { "key": "path", "hint": "Đường dẫn", "default": "." }
+      ],
+      "docs": "Flags hữu ích:\n• -r: recursive (vào thư mục con)\n• -n: show line number\n• -i: case-insensitive\n• -w: match whole word\n• -l: chỉ show tên file (không show line)\n• --include='*.ts': chỉ tìm trong file khớp pattern\n• -E: extended regex (dùng ngoặc tròn và |)\n\nĐa số trường hợp nên dùng ripgrep (rg) thay vì grep — nhanh hơn nhiều.",
+      "examples": [
+        "grep -rn \"TODO\" src/",
+        "grep -rni \"todo\" . --include='*.ts'",
+        "grep -rlE \"(FIXME|HACK)\" src/",
+        "grep -v \"debug\" log.txt  (invert: không chứa)"
+      ]
+    },
+    {
+      "id": "linux.find",
+      "title": "Find file theo tên",
+      "command": "find {{path}} -name \"{{name}}\"",
+      "tags": ["search", "find"],
+      "placeholders": [
+        { "key": "path", "hint": "Đường dẫn", "default": "." },
+        { "key": "name", "hint": "Tên (có thể dùng *)" }
+      ]
+    },
+    {
+      "id": "linux.ps",
+      "title": "Process list đầy đủ",
+      "command": "ps aux",
+      "tags": ["process", "list"]
+    },
+    {
+      "id": "linux.kill",
+      "title": "Kill process (force)",
+      "command": "kill -9 {{pid}}",
+      "tags": ["process", "kill"],
+      "placeholders": [{ "key": "pid", "hint": "Process ID" }]
+    },
+    {
+      "id": "linux.top",
+      "title": "Top processes (htop nếu có)",
+      "command": "htop",
+      "tags": ["process", "monitor"]
+    },
+    {
+      "id": "linux.df",
+      "title": "Disk free",
+      "command": "df -h",
+      "tags": ["disk", "storage"]
+    },
+    {
+      "id": "linux.du",
+      "title": "Directory size",
+      "command": "du -sh {{path}}",
+      "tags": ["disk", "size"],
+      "placeholders": [{ "key": "path", "hint": "Đường dẫn", "default": "." }]
+    },
+    {
+      "id": "linux.free",
+      "title": "RAM usage",
+      "command": "free -h",
+      "tags": ["memory", "ram"]
+    },
+    {
+      "id": "linux.tar-extract",
+      "title": "Extract tar.gz",
+      "command": "tar -xzvf {{file}}",
+      "tags": ["archive", "extract"],
+      "placeholders": [{ "key": "file", "hint": "File .tar.gz" }]
+    },
+    {
+      "id": "linux.tar-create",
+      "title": "Create tar.gz",
+      "command": "tar -czvf {{archive}} {{source}}",
+      "tags": ["archive", "compress"],
+      "placeholders": [
+        { "key": "archive", "hint": "Tên file archive", "default": "archive.tar.gz" },
+        { "key": "source", "hint": "Thư mục nguồn" }
+      ]
+    },
+    {
+      "id": "linux.wget",
+      "title": "Download via wget",
+      "command": "wget {{url}}",
+      "tags": ["download"],
+      "placeholders": [{ "key": "url", "hint": "URL" }]
+    },
+    {
+      "id": "linux.curl",
+      "title": "HTTP request với curl",
+      "command": "curl -v {{url}}",
+      "tags": ["http", "request"],
+      "placeholders": [{ "key": "url", "hint": "URL" }]
+    },
+    {
+      "id": "linux.systemctl-restart",
+      "title": "Restart service",
+      "command": "sudo systemctl restart {{service}}",
+      "tags": ["service", "restart"],
+      "placeholders": [{ "key": "service", "hint": "Tên service" }]
+    },
+    {
+      "id": "linux.systemctl-status",
+      "title": "Service status",
+      "command": "sudo systemctl status {{service}}",
+      "tags": ["service", "status"],
+      "placeholders": [{ "key": "service", "hint": "Tên service" }]
+    },
+    {
+      "id": "linux.journalctl",
+      "title": "Follow system logs",
+      "command": "sudo journalctl -u {{service}} -f",
+      "tags": ["logs", "service"],
+      "placeholders": [{ "key": "service", "hint": "Service" }]
+    },
+    {
+      "id": "linux.which",
+      "title": "Which (vị trí binary)",
+      "command": "which {{cmd}}",
+      "tags": ["path"],
+      "placeholders": [{ "key": "cmd", "hint": "Command name" }]
+    },
+    {
+      "id": "linux.env",
+      "title": "Environment variables",
+      "command": "env",
+      "tags": ["env"]
+    },
+    {
+      "id": "linux.cat",
+      "title": "Print file",
+      "command": "cat {{file}}",
+      "tags": ["file", "read"],
+      "placeholders": [{ "key": "file", "hint": "File path" }]
+    },
+    {
+      "id": "linux.tail-f",
+      "title": "Follow log file",
+      "command": "tail -f {{file}}",
+      "tags": ["log", "watch"],
+      "placeholders": [{ "key": "file", "hint": "Log file path" }]
+    }
+  ]
+}

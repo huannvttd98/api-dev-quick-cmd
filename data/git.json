@@ -1,0 +1,175 @@
+{
+  "category": "git",
+  "commands": [
+    {
+      "id": "git.status",
+      "title": "Status",
+      "command": "git status",
+      "description": "Xem trạng thái working tree",
+      "tags": ["check", "diff", "state"],
+      "docs": "Hiển thị các file được staged, modified, untracked và branch hiện tại.\n\nThường dùng trước khi commit để xem mình sắp commit những gì. Không thay đổi repo.",
+      "examples": [
+        "git status",
+        "git status --short",
+        "git status -sb"
+      ]
+    },
+    {
+      "id": "git.clone",
+      "title": "Clone repository",
+      "command": "git clone {{url}}",
+      "description": "Tải 1 repo remote về máy local",
+      "tags": ["init", "download"],
+      "placeholders": [{ "key": "url", "hint": "Repository URL (https hoặc ssh)" }],
+      "docs": "Clone tạo bản copy đầy đủ của repo remote, gồm toàn bộ history và branches.\n\nHỗ trợ HTTPS và SSH. Dùng SSH nếu muốn push mà không cần nhập password mỗi lần (cần ssh key đã add vào GitHub/GitLab).",
+      "examples": [
+        "git clone https://github.com/torvalds/linux.git",
+        "git clone git@github.com:user/repo.git",
+        "git clone https://github.com/user/repo.git my-local-name",
+        "git clone --depth 1 https://github.com/big/repo.git (shallow clone)"
+      ]
+    },
+    {
+      "id": "git.add-all",
+      "title": "Stage all changes",
+      "command": "git add .",
+      "tags": ["stage", "index"]
+    },
+    {
+      "id": "git.commit",
+      "title": "Commit với message",
+      "command": "git commit -m \"{{message}}\"",
+      "tags": ["save", "snapshot"],
+      "placeholders": [{ "key": "message", "hint": "Commit message" }]
+    },
+    {
+      "id": "git.commit-amend",
+      "title": "Amend last commit",
+      "command": "git commit --amend --no-edit",
+      "description": "Thêm stage vào commit trước, giữ nguyên message",
+      "tags": ["fix", "rewrite"]
+    },
+    {
+      "id": "git.push",
+      "title": "Push current branch",
+      "command": "git push",
+      "tags": ["upload", "remote", "sync"]
+    },
+    {
+      "id": "git.push-origin-branch",
+      "title": "Push to specific branch",
+      "command": "git push origin {{branch}}",
+      "tags": ["upload", "remote"],
+      "placeholders": [{ "key": "branch", "hint": "Tên branch", "default": "main" }]
+    },
+    {
+      "id": "git.push-force-with-lease",
+      "title": "Force push (safe)",
+      "command": "git push --force-with-lease",
+      "description": "An toàn hơn --force vì check remote state",
+      "tags": ["force", "rebase"]
+    },
+    {
+      "id": "git.pull",
+      "title": "Pull current branch",
+      "command": "git pull",
+      "tags": ["download", "sync", "remote"]
+    },
+    {
+      "id": "git.pull-rebase",
+      "title": "Pull with rebase",
+      "command": "git pull --rebase",
+      "description": "Rebase thay vì merge khi pull",
+      "tags": ["sync", "rebase"]
+    },
+    {
+      "id": "git.checkout-branch",
+      "title": "Switch branch",
+      "command": "git checkout {{branch}}",
+      "tags": ["branch", "switch"],
+      "placeholders": [{ "key": "branch", "hint": "Tên branch cần switch" }]
+    },
+    {
+      "id": "git.new-branch",
+      "title": "Create & switch to new branch",
+      "command": "git checkout -b {{name}}",
+      "description": "Tạo branch mới từ branch hiện tại và switch sang luôn",
+      "tags": ["branch", "create"],
+      "placeholders": [{ "key": "name", "hint": "Tên branch mới" }],
+      "docs": "Tương đương với 2 lệnh: git branch <name> + git checkout <name>.\n\nBranch mới sẽ có cùng commit HEAD với branch hiện tại. Quy ước naming: feature/xxx, fix/xxx, hotfix/xxx.",
+      "examples": [
+        "git checkout -b feature/user-login",
+        "git checkout -b fix/header-bug",
+        "git checkout -b release/1.2.0 main  (tạo từ branch main cụ thể)"
+      ]
+    },
+    {
+      "id": "git.delete-branch",
+      "title": "Delete local branch",
+      "command": "git branch -D {{name}}",
+      "tags": ["branch", "delete"],
+      "placeholders": [{ "key": "name", "hint": "Tên branch cần xoá" }]
+    },
+    {
+      "id": "git.merge",
+      "title": "Merge branch vào current",
+      "command": "git merge {{branch}}",
+      "tags": ["merge", "combine"],
+      "placeholders": [{ "key": "branch", "hint": "Branch cần merge vào" }]
+    },
+    {
+      "id": "git.rebase",
+      "title": "Rebase current onto branch",
+      "command": "git rebase {{branch}}",
+      "tags": ["rebase", "history"],
+      "placeholders": [{ "key": "branch", "hint": "Branch base", "default": "main" }]
+    },
+    {
+      "id": "git.reset-hard",
+      "title": "Reset hard tới commit",
+      "command": "git reset --hard {{ref}}",
+      "description": "Cẩn thận — xoá toàn bộ thay đổi chưa commit",
+      "tags": ["reset", "undo", "danger"],
+      "placeholders": [{ "key": "ref", "hint": "Commit SHA hoặc ref", "default": "HEAD" }]
+    },
+    {
+      "id": "git.revert",
+      "title": "Revert commit (tạo commit đảo ngược)",
+      "command": "git revert {{commit}}",
+      "tags": ["undo", "safe"],
+      "placeholders": [{ "key": "commit", "hint": "Commit SHA" }]
+    },
+    {
+      "id": "git.log-graph",
+      "title": "Log dạng graph",
+      "command": "git log --oneline --graph --all --decorate",
+      "tags": ["history", "log", "view"]
+    },
+    {
+      "id": "git.diff",
+      "title": "Diff changes",
+      "command": "git diff",
+      "tags": ["diff", "changes"]
+    },
+    {
+      "id": "git.stash",
+      "title": "Stash changes",
+      "command": "git stash push -m \"{{message}}\"",
+      "tags": ["save", "wip"],
+      "placeholders": [{ "key": "message", "hint": "Tên stash", "default": "wip" }]
+    },
+    {
+      "id": "git.stash-pop",
+      "title": "Apply latest stash",
+      "command": "git stash pop",
+      "tags": ["restore", "wip"]
+    },
+    {
+      "id": "git.fetch-prune",
+      "title": "Fetch all + prune",
+      "command": "git fetch --all --prune",
+      "description": "Cập nhật refs remote, xoá branches đã bị xoá trên remote",
+      "tags": ["sync", "cleanup"]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "category": "node",
+  "commands": [
+    {
+      "id": "node.npm-install",
+      "title": "Install dependencies",
+      "command": "npm install",
+      "tags": ["install", "deps"]
+    },
+    {
+      "id": "node.npm-install-pkg",
+      "title": "Install package",
+      "command": "npm install {{package}}",
+      "tags": ["install", "add"],
+      "placeholders": [{ "key": "package", "hint": "Tên package" }]
+    },
+    {
+      "id": "node.npm-install-dev",
+      "title": "Install dev dependency",
+      "command": "npm install -D {{package}}",
+      "tags": ["install", "dev"],
+      "placeholders": [{ "key": "package", "hint": "Tên package" }]
+    },
+    {
+      "id": "node.npm-uninstall",
+      "title": "Uninstall package",
+      "command": "npm uninstall {{package}}",
+      "tags": ["remove"],
+      "placeholders": [{ "key": "package", "hint": "Tên package" }]
+    },
+    {
+      "id": "node.npm-run",
+      "title": "Run script",
+      "command": "npm run {{script}}",
+      "tags": ["run", "script"],
+      "placeholders": [{ "key": "script", "hint": "Tên script (dev/build/test)" }]
+    },
+    {
+      "id": "node.npm-outdated",
+      "title": "List outdated packages",
+      "command": "npm outdated",
+      "tags": ["update", "check"]
+    },
+    {
+      "id": "node.npm-update",
+      "title": "Update packages",
+      "command": "npm update",
+      "tags": ["update"]
+    },
+    {
+      "id": "node.npm-audit",
+      "title": "Security audit",
+      "command": "npm audit",
+      "tags": ["security"]
+    },
+    {
+      "id": "node.npm-audit-fix",
+      "title": "Audit auto-fix",
+      "command": "npm audit fix",
+      "tags": ["security", "fix"]
+    },
+    {
+      "id": "node.npm-init",
+      "title": "Init package.json",
+      "command": "npm init -y",
+      "tags": ["init"]
+    },
+    {
+      "id": "node.npm-publish",
+      "title": "Publish package",
+      "command": "npm publish --access public",
+      "tags": ["publish", "release"]
+    },
+    {
+      "id": "node.npm-link",
+      "title": "Link local package",
+      "command": "npm link",
+      "tags": ["link", "dev"]
+    },
+    {
+      "id": "node.npm-cache-clean",
+      "title": "Clean npm cache",
+      "command": "npm cache clean --force",
+      "tags": ["cache", "clean"]
+    },
+    {
+      "id": "node.npx",
+      "title": "Run binary từ package",
+      "command": "npx {{binary}}",
+      "tags": ["run", "binary"],
+      "placeholders": [{ "key": "binary", "hint": "Binary name (vd: create-vite)" }]
+    },
+    {
+      "id": "node.yarn-install",
+      "title": "Yarn install",
+      "command": "yarn install",
+      "tags": ["yarn", "install"]
+    },
+    {
+      "id": "node.yarn-add",
+      "title": "Yarn add",
+      "command": "yarn add {{package}}",
+      "tags": ["yarn", "add"],
+      "placeholders": [{ "key": "package", "hint": "Package" }]
+    },
+    {
+      "id": "node.pnpm-install",
+      "title": "pnpm install",
+      "command": "pnpm install",
+      "tags": ["pnpm", "install"]
+    },
+    {
+      "id": "node.pnpm-add",
+      "title": "pnpm add",
+      "command": "pnpm add {{package}}",
+      "tags": ["pnpm", "add"],
+      "placeholders": [{ "key": "package", "hint": "Package" }]
+    },
+    {
+      "id": "node.node-version",
+      "title": "Node version",
+      "command": "node --version",
+      "tags": ["version"]
+    },
+    {
+      "id": "node.npm-version",
+      "title": "npm version",
+      "command": "npm --version",
+      "tags": ["version"]
+    },
+    {
+      "id": "node.clean-install",
+      "title": "Xoá node_modules + reinstall",
+      "command": "rm -rf node_modules package-lock.json && npm install",
+      "tags": ["clean", "reset"]
+    }
+  ]
+}
