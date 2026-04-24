@@ -49,6 +49,8 @@ npm --prefix api run start
 
 ## Bien moi truong
 
+Server va worker tu dong load file `api/.env` thong qua `dotenv` khi khoi dong.
+
 - `PORT`: Port server (default `8787`).
 - `DATASET_VERSION`: Version string tra ve qua endpoint `/api/v1/version` (default `2026-04-24`).
 - `CORS_ORIGINS`: Danh sach origin duoc phep, tach boi dau phay (default `http://localhost:5173,http://localhost:3000`). Dung `*` de allow tat ca origin.
