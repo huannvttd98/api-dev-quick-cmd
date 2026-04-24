@@ -2,6 +2,7 @@ import type { Category } from "../types";
 
 export const CATEGORIES: Category[] = [
   { id: "git", label: "Git", emoji: "🌿" },
+  { id: "apache", label: "Apache", emoji: "🪶" },
   { id: "docker", label: "Docker", emoji: "🐳" },
   { id: "laravel", label: "Laravel", emoji: "🚀" },
   { id: "linux", label: "Linux", emoji: "🐧" },

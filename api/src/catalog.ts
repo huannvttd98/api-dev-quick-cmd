@@ -1,3 +1,4 @@
+import apacheData from "../../data/apache.json" with { type: "json" };
 import dockerData from "../../data/docker.json" with { type: "json" };
 import gitData from "../../data/git.json" with { type: "json" };
 import laravelData from "../../data/laravel.json" with { type: "json" };
@@ -11,6 +12,7 @@ import type { Category, CategoryDataset, Command } from "./types.js";
 
 const DATASETS: CategoryDataset[] = [
   gitData as CategoryDataset,
+  apacheData as CategoryDataset,
   dockerData as CategoryDataset,
   laravelData as CategoryDataset,
   linuxData as CategoryDataset,
@@ -23,6 +25,7 @@ const DATASETS: CategoryDataset[] = [
 
 export const CATEGORIES: Category[] = [
   { id: "git", label: "Git", emoji: "🌿" },
+  { id: "apache", label: "Apache", emoji: "🪶" },
   { id: "docker", label: "Docker", emoji: "🐳" },
   { id: "laravel", label: "Laravel", emoji: "🚀" },
   { id: "linux", label: "Linux", emoji: "🐧" },

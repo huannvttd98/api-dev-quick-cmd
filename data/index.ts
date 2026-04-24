@@ -1,4 +1,5 @@
 import type { CategoryDataset, Command } from "../types";
+import apacheData from "./apache.json";
 import dockerData from "./docker.json";
 import gitData from "./git.json";
 import laravelData from "./laravel.json";
@@ -11,6 +12,7 @@ import sshData from "./ssh.json";
 
 const DATASETS: CategoryDataset[] = [
   gitData as CategoryDataset,
+  apacheData as CategoryDataset,
   dockerData as CategoryDataset,
   laravelData as CategoryDataset,
   linuxData as CategoryDataset,

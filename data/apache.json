@@ -1,0 +1,80 @@
+{
+  "category": "apache",
+  "commands": [
+    {
+      "id": "apache.listen-port",
+      "title": "Set Apache Listen port",
+      "command": "sudo sed -i 's/^Listen .*/Listen {{port}}/' /etc/apache2/ports.conf",
+      "description": "Doi port Apache trong ports.conf",
+      "tags": ["apache", "port", "listen", "config"],
+      "placeholders": [{ "key": "port", "hint": "Port Apache muon listen", "default": "8080" }]
+    },
+    {
+      "id": "apache.vhost-port",
+      "title": "Set VirtualHost port",
+      "command": "sudo sed -i 's/<VirtualHost *:80>/<VirtualHost *:{{port}}>/' /etc/apache2/sites-available/{{site}}.conf",
+      "description": "Doi VirtualHost sang port moi",
+      "tags": ["apache", "vhost", "port"],
+      "placeholders": [
+        { "key": "port", "hint": "Port cho VirtualHost", "default": "8080" },
+        { "key": "site", "hint": "Ten file site (khong kem .conf)", "default": "000-default" }
+      ]
+    },
+    {
+      "id": "apache.enable-site",
+      "title": "Enable Apache site",
+      "command": "sudo a2ensite {{site}}.conf",
+      "tags": ["apache", "site", "enable"],
+      "placeholders": [{ "key": "site", "hint": "Ten site (khong kem .conf)", "default": "000-default" }]
+    },
+    {
+      "id": "apache.disable-site",
+      "title": "Disable Apache site",
+      "command": "sudo a2dissite {{site}}.conf",
+      "tags": ["apache", "site", "disable"],
+      "placeholders": [{ "key": "site", "hint": "Ten site (khong kem .conf)", "default": "000-default" }]
+    },
+    {
+      "id": "apache.allow-port-ufw",
+      "title": "Open port with UFW",
+      "command": "sudo ufw allow {{port}}/tcp",
+      "description": "Mo firewall cho port Apache tren Ubuntu",
+      "tags": ["apache", "port", "ufw", "firewall"],
+      "placeholders": [{ "key": "port", "hint": "Port can mo", "default": "8080" }]
+    },
+    {
+      "id": "apache.allow-port-firewalld",
+      "title": "Open port with firewalld",
+      "command": "sudo firewall-cmd --permanent --add-port={{port}}/tcp && sudo firewall-cmd --reload",
+      "description": "Mo port Apache tren CentOS/RHEL",
+      "tags": ["apache", "port", "firewalld", "firewall"],
+      "placeholders": [{ "key": "port", "hint": "Port can mo", "default": "8080" }]
+    },
+    {
+      "id": "apache.test-config",
+      "title": "Test Apache config",
+      "command": "sudo apachectl configtest",
+      "tags": ["apache", "config", "test"]
+    },
+    {
+      "id": "apache.restart",
+      "title": "Restart Apache",
+      "command": "sudo systemctl restart apache2",
+      "tags": ["apache", "restart", "service"]
+    },
+    {
+      "id": "apache.status",
+      "title": "Check Apache status",
+      "command": "sudo systemctl status apache2",
+      "tags": ["apache", "status", "service"]
+    },
+    {
+      "id": "apache.check-port",
+      "title": "Check Apache listening port",
+      "command": "sudo ss -tlnp | grep ':{{port}}'",
+      "description": "Kiem tra Apache da listen port mong muon chua",
+      "tags": ["apache", "port", "verify"],
+      "placeholders": [{ "key": "port", "hint": "Port can kiem tra", "default": "8080" }]
+    }
+  ]
+}

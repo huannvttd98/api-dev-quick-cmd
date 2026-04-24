@@ -1,5 +1,6 @@
 export type CategoryId =
   | "git"
+  | "apache"
   | "docker"
   | "laravel"
   | "linux"
